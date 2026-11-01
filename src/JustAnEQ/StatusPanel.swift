@@ -59,8 +59,22 @@ final class StatusPanelController: NSObject {
     }
 
     /// Opens the panel unless it is already visible (launch and Finder re-open).
-    func show() {
-        if !panel.isVisible { openPanel() }
+    /// At launch the status item is placed a moment later: wait up to `attempts` x 0.1 s
+    /// for it, then fall back to the top-right position.
+    func show(waitForIcon attempts: Int = 0) {
+        guard !panel.isVisible else { return }
+        if attempts > 0, !iconPlaced {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.show(waitForIcon: attempts - 1)
+            }
+            return
+        }
+        openPanel()
+    }
+
+    private var iconPlaced: Bool {
+        guard let window = statusItem.button?.window, let screen = window.screen else { return false }
+        return window.frame.minY >= screen.visibleFrame.maxY - 1
     }
 
     private func openPanel() {

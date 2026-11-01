@@ -77,7 +77,7 @@ final class AppController: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusPanel = StatusPanelController(controller: self)
         // Menu-bar-only app: show the panel so a launch from Finder visibly does something.
-        DispatchQueue.main.async { self.statusPanel?.show() }
+        statusPanel?.show(waitForIcon: 10)
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
