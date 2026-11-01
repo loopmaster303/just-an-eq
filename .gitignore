@@ -1,0 +1,5 @@
+.build/
+build/
+/docs/*
+!/docs/screenshot.png
+review-m2*.txt
