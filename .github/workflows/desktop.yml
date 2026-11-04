@@ -1,0 +1,35 @@
+name: desktop
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/desktop/**", ".github/workflows/desktop.yml"]
+  pull_request:
+    paths: ["src/desktop/**", ".github/workflows/desktop.yml"]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset: just-an-eq-linux-x86_64
+            bin: just-an-eq
+          - os: windows-latest
+            asset: just-an-eq-windows-x86_64.exe
+            bin: just-an-eq.exe
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: src/desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libdbus-1-dev
+      - run: cargo test
+      - run: cargo build --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: src/desktop/target/release/${{ matrix.bin }}

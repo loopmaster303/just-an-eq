@@ -55,6 +55,31 @@ menu bar icon (or launch the app again) to bring the panel back.
 If your menu bar is crowded, macOS may hide the icon behind the notch. The panel
 still opens at the top right, and the hotkey always works.
 
+## Windows and Linux
+
+The same EQ as a small tray app, built from `src/desktop` (Rust). It does no
+DSP of its own; the platform does:
+
+- **Linux** needs PipeWire with WirePlumber (`pw-cli`, `pw-cat`, `wpctl`,
+  `pw-dump` on the path). The app creates a filter-chain sink "just an eq",
+  makes it the default output while On and plays the result on your real device.
+  Switching Off restores the previous default.
+- **Windows** needs [Equalizer APO](https://sourceforge.net/projects/equalizerapo/)
+  installed once (admin, pick your playback device in its Configurator, reboot).
+  The app writes `config\just-an-eq.txt` and adds one `Include:` line to
+  Equalizer APO's `config.txt`.
+
+Binaries come from the [latest release](../../releases/latest)
+(`just-an-eq-linux-x86_64`, `just-an-eq-windows-x86_64.exe`), or build them:
+
+```bash
+cargo build --release --manifest-path src/desktop/Cargo.toml
+```
+
+Settings live in `~/.config/just-an-eq/settings.json` (Linux) or
+`%APPDATA%\just-an-eq\settings.json` (Windows), same layout as on macOS.
+Not in the desktop version: the limiter, the hotkey.
+
 ## How it works
 
 A Core Audio process tap

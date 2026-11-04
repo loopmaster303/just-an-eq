@@ -1,0 +1,29 @@
+[package]
+name = "just-an-eq"
+version = "0.1.0"
+edition = "2021"
+description = "just an eq: a tiny system-wide EQ in the tray (Windows and Linux)"
+license = "MIT"
+
+[[bin]]
+name = "just-an-eq"
+path = "src/main.rs"
+
+[dependencies]
+eframe = "0.37"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "7"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+ksni = { version = "0.3", default-features = false, features = ["async-io", "blocking"] }
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+tray-icon = "0.26"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
