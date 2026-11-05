@@ -140,6 +140,9 @@ impl App {
         if let Some(err) = &self.error {
             ui.add_space(6.0);
             ui.colored_label(Color32::from_rgb(255, 90, 80), err);
+        } else if let Some(note) = self.backend.status() {
+            ui.add_space(6.0);
+            ui.colored_label(ACCENT, note);
         }
     }
 

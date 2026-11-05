@@ -9,12 +9,18 @@ pub trait Backend {
     fn tick(&mut self, _settings: &Settings, _enabled: bool) -> Result<(), String> {
         Ok(())
     }
+    /// A non-fatal note for the UI, for example a device the EQ is not active on yet.
+    fn status(&self) -> Option<String> {
+        None
+    }
 }
 
 #[cfg(target_os = "linux")]
 pub mod pipewire;
 #[cfg(any(windows, test))]
 pub mod apo;
+#[cfg(windows)]
+pub mod apo_reg;
 
 #[cfg(target_os = "linux")]
 pub fn create() -> Box<dyn Backend> {

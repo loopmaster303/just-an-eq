@@ -58,23 +58,36 @@ still opens at the top right, and the hotkey always works.
 ## Windows and Linux
 
 The same EQ as a small tray app, built from `src/desktop` (Rust). It does no
-DSP of its own; the platform does:
+DSP of its own; the platform does.
 
-- **Linux** needs PipeWire with WirePlumber (`pw-cli`, `pw-cat`, `wpctl`,
-  `pw-dump` on the path). The app creates a filter-chain sink "just an eq",
-  makes it the default output while On and plays the result on your real device.
-  Switching Off restores the previous default.
-- **Windows** needs [Equalizer APO](https://sourceforge.net/projects/equalizerapo/)
-  installed once (admin, pick your playback device in its Configurator, reboot).
-  The app writes `config\just-an-eq.txt` and adds one `Include:` line to
-  Equalizer APO's `config.txt`.
+**Windows:** download `just-an-eq.exe` from the
+[latest release](../../releases/latest) and run it. The first start asks for
+admin rights once, then it installs itself to `Program Files\just an eq`,
+sets up [Equalizer APO](https://sourceforge.net/projects/equalizerapo/) (GPL,
+bundled; it runs inside the Windows audio service and does the filtering),
+switches it on for every active playback device and starts in the tray at
+login. Plug in headphones later and the app registers them after one more
+admin prompt. Uninstall from Windows Settings as usual; Equalizer APO stays.
+The app writes `config\just-an-eq.txt` and keeps its own block at the top of
+Equalizer APO's `config.txt`; other lines in that file are left alone.
 
-Binaries come from the [latest release](../../releases/latest)
-(`just-an-eq-linux-x86_64`, `just-an-eq-windows-x86_64.exe`), or build them:
+**Linux:** download `just-an-eq-linux-x86_64`, make it executable, run it.
+Needs PipeWire with WirePlumber (`pw-cli`, `pw-cat`, `wpctl`, `pw-dump` on the
+path). The app creates a filter-chain sink "just an eq", makes it the default
+output while On and plays the result on your real device. Switching Off
+restores the previous default.
+
+Build it yourself:
 
 ```bash
 cargo build --release --manifest-path src/desktop/Cargo.toml
 ```
+
+For the Windows build, put `EqualizerAPO-x64-1.4.2.exe` into
+`src/desktop/windows/` first (SHA-256
+`7403be7427bbe1936a40dded082829b6e217fc4f5990fee5cba501f0ae055afa`); the
+build bundles it. Cross-building from Linux works with `mingw-w64-gcc` and
+`--target x86_64-pc-windows-gnu`.
 
 Settings live in `~/.config/just-an-eq/settings.json` (Linux) or
 `%APPDATA%\just-an-eq\settings.json` (Windows), same layout as on macOS.
