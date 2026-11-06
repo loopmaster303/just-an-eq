@@ -56,6 +56,25 @@ fn run_hidden(program: &str, args: &[&str]) -> Result<bool, String> {
         .map_err(|e| format!("{program}: {e}"))
 }
 
+/// End every other just-an-eq process and wait until it is gone.
+fn kill_others() {
+    let me = std::process::id().to_string();
+    let _ = run_hidden("taskkill", &["/IM", "just-an-eq.exe", "/F", "/FI", &format!("PID ne {me}")]);
+    for _ in 0..20 {
+        let out = Command::new("tasklist")
+            .args(["/FI", "IMAGENAME eq just-an-eq.exe", "/FO", "CSV", "/NH"])
+            .creation_flags(NO_WINDOW)
+            .output();
+        let others = out
+            .map(|o| String::from_utf8_lossy(&o.stdout).lines().filter(|l| l.contains("just-an-eq.exe") && !l.contains(&format!("\"{me}\""))).count())
+            .unwrap_or(0);
+        if others == 0 {
+            return;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(250));
+    }
+}
+
 fn install_apo() -> Result<(), String> {
     if apo_reg::installed() {
         return Ok(());
@@ -104,8 +123,17 @@ pub fn install() -> Result<PathBuf, String> {
     let exe = installed_exe();
     std::fs::create_dir_all(&dir).map_err(|e| format!("create {}: {e}", dir.display()))?;
     if me != exe {
-        let _ = run_hidden("taskkill", &["/IM", "just-an-eq.exe", "/F", "/FI", &format!("PID ne {}", std::process::id())]);
-        std::fs::copy(&me, &exe).map_err(|e| format!("copy to {}: {e}", exe.display()))?;
+        kill_others();
+        // the old instance may hold the file a moment after taskkill returns
+        let mut last = Ok(0);
+        for _ in 0..40 {
+            last = std::fs::copy(&me, &exe);
+            if last.is_ok() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(250));
+        }
+        last.map_err(|e| format!("copy to {}: {e}", exe.display()))?;
     }
     install_apo()?;
     apo_reg::register_all()?;
@@ -131,7 +159,7 @@ pub fn launch_unelevated(exe: &std::path::Path) {
 
 /// Must run elevated. Equalizer APO stays; our filter file is switched off.
 pub fn uninstall() -> Result<(), String> {
-    let _ = run_hidden("taskkill", &["/IM", "just-an-eq.exe", "/F", "/FI", &format!("PID ne {}", std::process::id())]);
+    kill_others();
     if let Some(cfg) = crate::backend::apo::config_dir() {
         let _ = std::fs::write(cfg.join(crate::backend::apo::FILE), "# off\n");
     }
