@@ -2,5 +2,7 @@
 build/
 /docs/*
 !/docs/screenshot.png
+!/docs/screenshot-windows.png
+!/docs/screenshot-linux.png
 review-m2*.txt
 /dist/

@@ -4,7 +4,12 @@ A tiny system-wide equalizer for macOS, Windows and Linux. It lives in the
 menu bar or tray and shapes everything your computer plays: Spotify, YouTube,
 games, calls, on speakers, headphones or Bluetooth.
 
-<p align="center"><img src="docs/screenshot.png" width="376" alt="just an eq panel in mixer mode"></p>
+<p align="center">
+<img src="docs/screenshot.png" width="250" alt="just an eq on macOS">
+<img src="docs/screenshot-windows.png" width="250" alt="just an eq on Windows">
+<img src="docs/screenshot-linux.png" width="250" alt="just an eq on Linux">
+<br><sub>macOS · Windows · Linux</sub>
+</p>
 
 - **Mixer mode**: four big rotary knobs like a DJ mixer (LF, Lo-Mid, Hi-Mid,
   HF). Cut down to a full kill, boost up to +6 dB. Double-click a knob to reset.
