@@ -28,10 +28,11 @@ pub fn is_admin() -> bool {
     RegKey::predef(HKEY_LOCAL_MACHINE).open_subkey_with_flags("SOFTWARE", KEY_WRITE).is_ok()
 }
 
-/// True when this exe runs from somewhere else and nothing is installed yet.
+/// True when this exe runs from somewhere else, for example a download
+/// folder: first install, or an update that replaces the installed copy.
 pub fn wants_install() -> bool {
     let Ok(me) = std::env::current_exe() else { return false };
-    !me.starts_with(install_dir()) && !installed_exe().exists()
+    !me.starts_with(install_dir())
 }
 
 /// Re-run this exe elevated (one UAC prompt) with the given argument.
