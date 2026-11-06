@@ -15,6 +15,14 @@ pub trait Backend {
     }
 }
 
+/// Touches nothing; used for `--screenshot`.
+pub struct Noop;
+impl Backend for Noop {
+    fn apply(&mut self, _: &Settings, _: bool) -> Result<(), String> {
+        Ok(())
+    }
+}
+
 #[cfg(target_os = "linux")]
 pub mod pipewire;
 #[cfg(any(windows, test))]

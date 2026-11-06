@@ -17,12 +17,24 @@ fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: eframe::egui::ViewportBuilder::default()
             .with_title("just an eq")
-            .with_inner_size([420.0, 330.0])
+            .with_inner_size([376.0, 620.0])
             .with_resizable(false)
             .with_icon(eframe::egui::IconData { rgba: icon::rgba(), width: icon::SIZE, height: icon::SIZE }),
         ..Default::default()
     };
-    eframe::run_native("just an eq", options, Box::new(|cc| Ok(Box::new(ui::App::new(cc)))))
+    // `--screenshot out.png [--graphic]`: render the demo panel to a PNG and quit (README pictures).
+    let shot = std::env::args().skip_while(|a| a != "--screenshot").nth(1).map(std::path::PathBuf::from);
+    let graphic = std::env::args().any(|a| a == "--graphic");
+    eframe::run_native(
+        "just an eq",
+        options,
+        Box::new(move |cc| {
+            Ok(Box::new(match shot {
+                Some(path) => ui::App::for_screenshot(cc, path, graphic),
+                None => ui::App::new(cc),
+            }))
+        }),
+    )
 }
 
 /// `--register-apo`, `--install`, `--uninstall` run elevated and exit; a first

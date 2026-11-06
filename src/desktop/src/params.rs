@@ -20,7 +20,7 @@ pub struct Band {
 pub const SLOTS: usize = 14;
 pub const GRAPHIC_RANGE: (f32, f32) = (-12.0, 12.0);
 pub const MIXER_RANGE: (f32, f32) = (-26.0, 6.0);
-pub const MIXER_NAMES: [&str; 4] = ["LF", "LO-MID", "HI-MID", "HF"];
+pub const MIXER_NAMES: [&str; 4] = ["LF", "LO MID", "HI MID", "HF"];
 pub const GRAPHIC_LABELS: [&str; 10] = ["31", "62", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"];
 
 const GRAPHIC_FREQ: [f64; 10] = [31.25, 62.5, 125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0, 16000.0];
